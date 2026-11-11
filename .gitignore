@@ -1,0 +1,14 @@
+# Configuração local
+.env
+
+# Java / VS Code
+bin/
+out/
+*.class
+.classpath
+.project
+.settings/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
