@@ -1,5 +1,6 @@
 public class App {
     // ---------------------- CONSTANTES ----------------------
+    // Parâmetros gerais usados pela simulação e pelo gerador de processos.
     static final int MAX_PROCESSOS = 8; // número máximo de processos
     static final long SEED = 42; // semente fixa
     static final int CPU_MIN = 8; // faixa de tempo de CPU por processo
@@ -11,6 +12,8 @@ public class App {
     static final int DUR_IMPR_MIN = 5, DUR_IMPR_MAX = 10;
 
     // ---------------------- ENUMERAÇÕES ----------------------
+    // Usamos números inteiros como códigos para prioridade, estado e dispositivo.
+    // Os vetores de nomes permitem exibir esses códigos como texto nos logs.
     static final int PRIORIDADE_BAIXA = 0, PRIORIDADE_ALTA = 1;
 
     static final int STATUS_NOVO = 0, STATUS_PRONTO = 1, STATUS_EXEC = 2,
@@ -20,7 +23,9 @@ public class App {
     static final int IO_NENHUM = 0, IO_DISCO = 1, IO_FITA = 2, IO_IMPRESSORA = 3;
     static final String[] NOME_IO = { "Nenhum", "Disco", "Fita", "Impressora" };
 
-    // ---------------------- PCB (Product ) ----------------------
+    // ---------------------- PCB (Process Control Block) ----------------------
+    // Cada posição i representa um processo. Os dados do mesmo processo ficam
+    // juntos pelo índice: pid[i], prioridade[i], cpuRestante[i] e assim por diante.
     static int[] pid = new int[MAX_PROCESSOS]; // ID do processo
     static int[] ppid = new int[MAX_PROCESSOS]; // ID do processo pai (-1 = sem pai)
     static int[] prioridade = new int[MAX_PROCESSOS]; // ALTA ou BAIXA
@@ -34,6 +39,8 @@ public class App {
     static int tempo = 0; // relógio global da simulação
 
     // ---------------------- GERADOR ALEATÓRIO ----------------------
+    // Gerador simples com semente: a mesma semente reproduz a mesma sequência,
+    // o que facilita repetir e comparar uma simulação.
     static long estadoRnd = 1;
 
     // Ponto de partida da sequencia
@@ -68,7 +75,7 @@ public class App {
 
     // ---------------------- PCB ----------------------
 
-    // Preenche o PCB do processo i
+    // Preenche os campos iniciais do processo guardado na posição i dos vetores.
     static void criarPCB(int i, int pai) {
         pid[i] = i;
         ppid[i] = pai;
@@ -105,20 +112,43 @@ public class App {
             criarPCB(i, pai);
 
             status[i] = STATUS_PRONTO;
+            // Processo novo fica pronto e entra no fim da fila de prioridade alta.
+            // A fila guarda o PID; os outros dados continuam nos vetores do PCB.
             filaPush(FILA_ALTA, pid[i]);
 
+            // Informa ao módulo de logs que este processo chegou ao sistema.
             LogsMetricas.registrarChegada(i);
         }
     }
 
-    // 2. FILAS
+    // ---------------------- FILAS ----------------------
+    // Os códigos identificam qual das três filas queremos acessar.
 
-    static final int FILA_ALTA = 0;
+    static final int FILA_ALTA = Filas.FILA_ALTA;
+    static final int FILA_BAIXA = Filas.FILA_BAIXA;
+    static final int FILA_IO = Filas.FILA_IO;
 
+    // Insere p no fim da fila escolhida; true indica que a inserção deu certo.
     static boolean filaPush(int fila, int p) {
-        return true;
+        return Filas.inserir(fila, p);
     }
 
+    // Retira e devolve o PID mais antigo; devolve -1 se a fila estiver vazia.
+    static int filaPop(int fila) {
+        return Filas.remover(fila);
+    }
+
+    // Consultas usadas pelo escalonador antes de tentar retirar um processo.
+    static boolean filaVazia(int fila) {
+        return Filas.vazia(fila);
+    }
+
+    static int filaTamanho(int fila) {
+        return Filas.tamanho(fila);
+    }
+
+    // Ponto de entrada: inicia métricas, gera os processos e mostra o PCB.
+    // O laço completo do escalonador ainda será integrado aqui/de outro módulo.
     public static void main(String[] args) {
         LogsMetricas.iniciar(
                 Configuracao.QUANTUM_ALTA,
@@ -128,5 +158,6 @@ public class App {
 
         gerarProcessos();
         imprimirTabela();
+        Filas.imprimirTodas();
     }
 }

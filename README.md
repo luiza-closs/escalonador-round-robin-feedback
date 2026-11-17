@@ -22,7 +22,8 @@ Java/
 ├── README.md
 └── src/
     ├── App.java       # ponto de entrada e integração
-    └── Configuracao.java # leitura da configuração comum
+    ├── Configuracao.java # leitura da configuração comum
+    └── Filas.java     # filas FIFO de alta, baixa e I/O
 ```
 
 Cada frente deve implementar sua parte em arquivos separados dentro de `src/`. Os nomes são sugestões; alinhem assinaturas e contratos entre as pessoas antes de integrar.
@@ -30,7 +31,7 @@ Cada frente deve implementar sua parte em arquivos separados dentro de `src/`. O
 | Frente | Entrega | Arquivos sugeridos |
 |---|---|---|
 | 1. PCB e gerador | dados do processo, geração aleatória e rajadas | `Processo.java`, `GeradorProcessos.java` |
-| 2. Filas | filas alta, baixa e de I/O | `Filas.java` |
+| 2. Filas | filas alta, baixa e de I/O | `Filas.java` (implementado) |
 | 3. Núcleo | laço do escalonador, quantum, preempção e ociosidade | `Escalonador.java` |
 | 4. I/O | bloqueio, duração e retorno às filas | `EntradaSaida.java` |
 | 5. Logs e métricas | eventos e resumo final | `Relatorio.java` |
@@ -43,6 +44,10 @@ Cada frente deve implementar sua parte em arquivos separados dentro de `src/`. O
 - Cada módulo deve expor funções públicas estáticas pequenas e documentar entradas, saídas e quem é responsável por alterar o estado do processo.
 - Combinem um único formato de evento de log, por exemplo: `[t=003] P1 sofreu preempção -> fila BAIXA`.
 - Não adicionem dependências externas sem necessidade; o projeto inicial compila com o JDK.
+
+### API das filas
+
+`Filas.inserir(fila, pid)` acrescenta ao fim e informa sucesso; `Filas.remover(fila)` retira o mais antigo e retorna `-1` se não houver elemento; `Filas.vazia(fila)` e `Filas.tamanho(fila)` consultam o estado. Use `Filas.FILA_ALTA`, `Filas.FILA_BAIXA` e `Filas.FILA_IO` como identificadores. `App.filaPush`, `App.filaPop`, `App.filaVazia` e `App.filaTamanho` são aliases para facilitar a integração com o núcleo.
 
 ## Configuração
 
