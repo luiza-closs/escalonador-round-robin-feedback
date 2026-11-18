@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-/** Escalonador Round Robin com Feedback: fila ALTA tem preferencia sobre a BAIXA. */
+/** Escalonador Round Robin com Feedback: fila ALTA tem preferência sobre a BAIXA. */
 final class Escalonador {
     // Plano de I/O por processo: pede I/O ao consumir ioApos[i][k] de CPU, no dispositivo ioDisp[i][k].
     static final int MAX_IO_POR_PROCESSO = 3;
@@ -9,7 +9,7 @@ final class Escalonador {
     private static final int[] qtdIo = new int[App.MAX_PROCESSOS];
     private static final int[] proxIo = new int[App.MAX_PROCESSOS];
 
-    // Linha do tempo da CPU: segmentos [inicio, fim) de um PID (-1 = ociosa).
+    // Linha do tempo da CPU: segmentos [início, fim) de um PID (-1 = ociosa).
     private static int[] segPid = new int[64];
     private static int[] segInicio = new int[64];
     private static int[] segFim = new int[64];
@@ -17,7 +17,7 @@ final class Escalonador {
 
     private Escalonador() {}
 
-    /** Roda a simulacao ate todos os processos finalizarem. */
+    /** Roda a simulação até todos os processos finalizarem. */
     static void executar() {
         int finalizados = 0;
         segmentos = 0;
@@ -28,7 +28,7 @@ final class Escalonador {
         while (finalizados < App.N) {
             int i = escolherProximo();
 
-            if (i < 0) { // nenhum processo pronto: CPU ociosa ate um I/O terminar
+            if (i < 0) { // nenhum processo pronto: CPU ociosa até um I/O terminar
                 int espera = menorIoRestante();
                 if (espera == 0) {
                     break;
@@ -59,7 +59,7 @@ final class Escalonador {
         return -1;
     }
 
-    // Executa o processo por ate um quantum. Retorna true se finalizou.
+    // Executa o processo por até um quantum. Retorna true se finalizou.
     private static boolean executarFatia(int i) {
         int quantum = App.prioridade[i] == App.PRIORIDADE_ALTA
                 ? Configuracao.QUANTUM_ALTA : Configuracao.QUANTUM_BAIXA;
@@ -86,7 +86,7 @@ final class Escalonador {
             }
         }
 
-        // quantum esgotado: preempcao, volta para a fila BAIXA
+        // quantum esgotado: preempção, volta para a fila BAIXA
         registrarSegmento(i, inicio, App.tempo);
         App.status[i] = App.STATUS_PRONTO;
         App.prioridade[i] = App.PRIORIDADE_BAIXA;
@@ -98,7 +98,7 @@ final class Escalonador {
     // ---------------------- I/O ----------------------
 
     // Sorteia 0 a MAX_IO_POR_PROCESSO pedidos por processo, em pontos crescentes
-    // entre 1 e cpuTotal-1 (o k-esimo pedido cai no k-esimo trecho da CPU).
+    // entre 1 e cpuTotal-1 (o k-ésimo pedido cai no k-ésimo trecho da CPU).
     private static void planejarIo() {
         for (int i = 0; i < App.N; i++) {
             int qtd = Math.min(App.rand() % (MAX_IO_POR_PROCESSO + 1), App.cpuTotal[i] - 1);
@@ -112,7 +112,7 @@ final class Escalonador {
         }
     }
 
-    // Se o processo chegou ao proximo ponto do plano, pede I/O e retorna true.
+    // Se o processo chegou ao próximo ponto do plano, pede I/O e retorna true.
     private static boolean pediuIoAgora(int i) {
         int k = proxIo[i];
         if (k >= qtdIo[i] || App.cpuTotal[i] - App.cpuRestante[i] != ioApos[i][k]) {
@@ -134,7 +134,7 @@ final class Escalonador {
     }
 
     private static void imprimirPlanoIo() {
-        System.out.println("\n--- Plano de I/O (apos X unidades de CPU) ---");
+        System.out.println("\n--- Plano de I/O (após X unidades de CPU) ---");
         for (int i = 0; i < App.N; i++) {
             StringBuilder linha = new StringBuilder("P" + App.pid[i] + ": ");
             if (qtdIo[i] == 0) {

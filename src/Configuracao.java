@@ -12,7 +12,6 @@ public final class Configuracao {
     public static final long SEMENTE = obterLongo("SEMENTE", 42L);
     public static final int QUANTUM_ALTA = obterInteiro("QUANTUM_ALTA", 2);
     public static final int QUANTUM_BAIXA = obterInteiro("QUANTUM_BAIXA", 4);
-    public static final int QUANTIDADE_PROCESSOS = obterInteiro("QUANTIDADE_PROCESSOS", 10);
 
     private Configuracao() {
         // Classe utilitária: não deve ser instanciada.
