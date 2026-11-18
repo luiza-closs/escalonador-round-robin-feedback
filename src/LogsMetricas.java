@@ -36,7 +36,7 @@ final class LogsMetricas {
         System.out.printf("[t=%03d] %s%n", App.tempo, String.format(formato, argumentos));
     }
 
-    // Registra a cregada depois que o processo entra na fila de alta prioridade.
+    // Registra a chegada depois que o processo entra na fila de alta prioridade.
     static void registrarChegada(int i) {
         chegada[i] = App.tempo;
         entradaNaFila[i] = App.tempo;

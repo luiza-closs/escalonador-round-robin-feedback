@@ -2,7 +2,7 @@ public class App {
     // ---------------------- CONSTANTES ----------------------
     // Parâmetros gerais usados pela simulação e pelo gerador de processos.
     static final int MAX_PROCESSOS = 8; // número máximo de processos
-    static final long SEED = 42; // semente fixa
+    static final long SEED = Configuracao.SEMENTE; // vem do .env (SEMENTE); sem .env fica 42
     static final int CPU_MIN = 8; // faixa de tempo de CPU por processo
     static final int CPU_MAX = 25;
 
@@ -43,12 +43,12 @@ public class App {
     // o que facilita repetir e comparar uma simulação.
     static long estadoRnd = 1;
 
-    // Ponto de partida da sequencia
+    // Ponto de partida da sequência
     static void semente(long s) {
-        estadoRnd = Math.abs(s % 2147483648L); // limite do long
+        estadoRnd = Math.abs(s % 2147483648L); // 2^31, o mesmo valor usado no rand()
     }
 
-    // Calcula o proximo numero da sequencia
+    // Calcula o próximo número da sequência
     static int rand() {
         estadoRnd = (estadoRnd * 1103515245L + 12345L) % 2147483648L;
         return (int) (estadoRnd / 65536);
@@ -147,8 +147,7 @@ public class App {
         return Filas.tamanho(fila);
     }
 
-    // Ponto de entrada: inicia métricas, gera os processos e mostra o PCB.
-    // O laço completo do escalonador ainda será integrado aqui/de outro módulo.
+    // Prepara filas e logs, cria os processos, roda a simulação e no fim mostra o resumo.
     public static void main(String[] args) {
         // 1. Preparação: filas vazias e métricas zeradas
         Filas.limparTodas();
