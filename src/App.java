@@ -150,14 +150,30 @@ public class App {
     // Ponto de entrada: inicia métricas, gera os processos e mostra o PCB.
     // O laço completo do escalonador ainda será integrado aqui/de outro módulo.
     public static void main(String[] args) {
+        // 1. Preparação: filas vazias e métricas zeradas
+        Filas.limparTodas();
         LogsMetricas.iniciar(
                 Configuracao.QUANTUM_ALTA,
                 Configuracao.QUANTUM_BAIXA,
                 MAX_PROCESSOS,
                 SEED);
 
+        // 2. Criação dos processos
+        System.out.println("\n=========== CRIAÇÃO DOS PROCESSOS ===========");
         gerarProcessos();
+        System.out.println("\n=========== ESTADO INICIAL ===========");
         imprimirTabela();
         Filas.imprimirTodas();
+
+        // 3. Simulação (o Escalonador também inicializa o módulo de I/O)
+        System.out.println("\n=========== SIMULAÇÃO ===========");
+        Escalonador.executar();
+
+        // 4. Resultados
+        System.out.println("\n=========== ESTADO FINAL ===========");
+        imprimirTabela();
+        Filas.imprimirTodas();
+        Escalonador.imprimirLinhaDoTempo();
+        LogsMetricas.imprimirResumo();
     }
 }
